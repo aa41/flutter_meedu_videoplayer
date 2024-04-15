@@ -5,7 +5,10 @@ import 'package:flutter_meedu_videoplayer/src/widgets/styles/primary/bottom_cont
 
 class PrimaryVideoPlayerControls extends StatelessWidget {
   final Responsive responsive;
-  const PrimaryVideoPlayerControls({Key? key, required this.responsive})
+  final bool enableGesture;
+
+  const PrimaryVideoPlayerControls(
+      {Key? key, required this.responsive, this.enableGesture = true})
       : super(key: key);
 
   @override
@@ -14,6 +17,7 @@ class PrimaryVideoPlayerControls extends StatelessWidget {
 
     return ControlsContainer(
       responsive: responsive,
+      enableDrags: enableGesture,
       child: Stack(
         alignment: Alignment.center,
         children: [

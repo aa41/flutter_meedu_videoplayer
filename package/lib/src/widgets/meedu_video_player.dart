@@ -74,6 +74,7 @@ class MeeduVideoPlayer extends StatefulWidget {
   /// displayed at an optimal position that doesn't obstruct other important
   /// elements of the video player interface.
   final double closedCaptionDistanceFromBottom;
+
   const MeeduVideoPlayer(
       {Key? key,
       required this.controller,
@@ -94,6 +95,7 @@ class MeeduVideoPlayer extends StatefulWidget {
 class _MeeduVideoPlayerState extends State<MeeduVideoPlayer> {
   // bool oldUIRefresh = false;
   ValueKey _key = const ValueKey(true);
+
   double videoWidth(VideoPlayerController? controller) {
     double width = controller != null
         ? controller.value.size.width != 0
@@ -243,6 +245,7 @@ class _MeeduVideoPlayerState extends State<MeeduVideoPlayer> {
                         if (_.controlsEnabled &&
                             _.controlsStyle == ControlsStyle.primary)
                           PrimaryVideoPlayerControls(
+                            enableGesture: _.enableDrags.value,
                             responsive: _.responsive,
                           ),
                         if (_.controlsEnabled &&

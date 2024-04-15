@@ -11,6 +11,8 @@ class ControlsContainer extends StatefulWidget {
   final Responsive responsive;
   final bool preventVerticalDrag;
   final bool preventHorizontalDrag;
+  final bool enableDrags;
+
   //Duration swipeDuration=Duration(seconds: 0);
   const ControlsContainer({
     Key? key,
@@ -18,6 +20,7 @@ class ControlsContainer extends StatefulWidget {
     required this.responsive,
     this.preventHorizontalDrag = false,
     this.preventVerticalDrag = false,
+    this.enableDrags = true,
   }) : super(key: key);
 
   @override
@@ -368,45 +371,45 @@ class _ControlsContainerState extends State<ControlsContainer> {
           ),
         ),
       ),
-      RxBuilder(
-        //observables: [_.showSwipeDuration],
-        //observables: [_.swipeDuration],
-        (__) => Align(
-          alignment: Alignment.center,
-          child: AnimatedOpacity(
-            duration: _.durations.videoFitOverlayDuration,
-            opacity: _.videoFitChanged.value ? 1 : 0,
-            child: Visibility(
-              visible: _.videoFitChanged.value,
-              child: Container(
-                color: Colors.grey[900],
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    _.videoFit.value.name[0].toUpperCase() +
-                        _.videoFit.value.name.substring(1),
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      RxBuilder(
-          //observables: [_.showControls],
-          (__) {
-        _.dataStatus.status.value;
-        if (_.dataStatus.error) {
-          return Center(
-              child: Text(
-            _.errorText!,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ));
-        } else {
-          return Container();
-        }
-      }),
+      // RxBuilder(
+      //   //observables: [_.showSwipeDuration],
+      //   //observables: [_.swipeDuration],
+      //   (__) => Align(
+      //     alignment: Alignment.center,
+      //     child: AnimatedOpacity(
+      //       duration: _.durations.videoFitOverlayDuration,
+      //       opacity: _.videoFitChanged.value ? 1 : 0,
+      //       child: Visibility(
+      //         visible: _.videoFitChanged.value,
+      //         child: Container(
+      //           color: Colors.grey[900],
+      //           child: Padding(
+      //             padding: const EdgeInsets.all(8.0),
+      //             child: Text(
+      //               _.videoFit.value.name[0].toUpperCase() +
+      //                   _.videoFit.value.name.substring(1),
+      //               style: const TextStyle(color: Colors.white, fontSize: 16),
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
+      // RxBuilder(
+      //     //observables: [_.showControls],
+      //     (__) {
+      //   _.dataStatus.status.value;
+      //   if (_.dataStatus.error) {
+      //     return Center(
+      //         child: Text(
+      //       _.errorText!,
+      //       style: const TextStyle(color: Colors.white, fontSize: 16),
+      //     ));
+      //   } else {
+      //     return Container();
+      //   }
+      // }),
       RxBuilder(
           //observables: [_.showControls],
           (__) {
@@ -571,106 +574,114 @@ class _ControlsContainerState extends State<ControlsContainer> {
   }
 
   Widget videoControls(MeeduPlayerController _, BuildContext context) {
-    return GestureDetector(
-        onPanStart: UniversalPlatform.isDesktop ? (__) => windowDrag(_) : null,
-        onTap: () => onTap(_),
-        onLongPressStart:
-            (_.mobileControls && _.enabledControls.onLongPressSpeedUp)
-                ? (details) {
-                    if (_.customCallbacks.onLongPressStartedCallback != null) {
-                      _.customCallbacks.onLongPressStartedCallback!(_);
-                    } else {
-                      _.setPlaybackSpeed(2);
-                    }
-                  }
-                : null,
-        onLongPressEnd:
-            (_.mobileControls && _.enabledControls.onLongPressSpeedUp)
-                ? (details) {
-                    if (_.customCallbacks.onLongPressEndedCallback != null) {
-                      _.customCallbacks.onLongPressEndedCallback!(_);
-                    } else {
-                      _.setPlaybackSpeed(1);
-                    }
-                  }
-                : null,
-        onHorizontalDragUpdate:
-            (_.mobileControls && !widget.preventVerticalDrag)
-                ? (details) => onHorizontalDragUpdate(details, _)
-                : null,
-        onHorizontalDragEnd: (_.mobileControls && !widget.preventVerticalDrag)
-            ? (details) => onHorizontalDragEnd(details, _)
-            : null,
-        onVerticalDragUpdate: (_.mobileControls && !widget.preventVerticalDrag)
-            ? (details) => onVerticalDragUpdate(details, _)
-            : null,
-        onVerticalDragEnd: (_.mobileControls && !widget.preventVerticalDrag)
-            ? (details) => onVerticalDragEnd(details, _)
-            : null,
-        child: AnimatedContainer(
-            duration: _.durations.controlsDuration,
-            color: _.showControls.value ? Colors.black26 : Colors.transparent,
-            child: Stack(
-              children: [
-                if (_.enabledControls.doubleTapToSeek &&
-                    (_.mobileControls) &&
-                    !_.lockedControls.value)
-                  Positioned.fill(
-                    bottom: widget.responsive.height * 0.20,
-                    top: widget.responsive.height * 0.20,
-                    child: VideoCoreForwardAndRewindLayout(
-                      responsive: widget.responsive,
-                      rewind: GestureDetector(
-                        // behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          if (_.doubleTapCount.value != 0 || tappedTwice) {
-                            _rewind(context, _);
-                            tappedOnce(_, true);
-                          } else {
-                            tappedOnce(_, false);
-                          }
-                        },
-                      ),
-                      forward: GestureDetector(
-                        // behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          if (_.doubleTapCount.value != 0 || tappedTwice) {
-                            _forward(context, _);
-                            tappedOnce(_, true);
-                          } else {
-                            tappedOnce(_, false);
-                          }
-                        },
-                        //behavior: HitTestBehavior.,
-                      ),
+    Widget result = GestureDetector(
+      onTap: () => onTap(_),
+      child: AnimatedContainer(
+          duration: _.durations.controlsDuration,
+          color: _.showControls.value ? Colors.black26 : Colors.transparent,
+          child: Stack(
+            children: [
+              if (_.enabledControls.doubleTapToSeek &&
+                  (_.mobileControls) &&
+                  !_.lockedControls.value)
+                Positioned.fill(
+                  bottom: widget.responsive.height * 0.20,
+                  top: widget.responsive.height * 0.20,
+                  child: VideoCoreForwardAndRewindLayout(
+                    responsive: widget.responsive,
+                    rewind: GestureDetector(
+                      // behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (_.doubleTapCount.value != 0 || tappedTwice) {
+                          _rewind(context, _);
+                          tappedOnce(_, true);
+                        } else {
+                          tappedOnce(_, false);
+                        }
+                      },
+                    ),
+                    forward: GestureDetector(
+                      // behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (_.doubleTapCount.value != 0 || tappedTwice) {
+                          _forward(context, _);
+                          tappedOnce(_, true);
+                        } else {
+                          tappedOnce(_, false);
+                        }
+                      },
+                      //behavior: HitTestBehavior.,
                     ),
                   ),
-                AnimatedOpacity(
+                ),
+              AnimatedOpacity(
+                opacity:
+                    (!_.showControls.value || _.lockedControls.value) ? 0 : 1,
+                duration: _.durations.controlsDuration,
+                child: IgnorePointer(
+                    ignoring: (!_.showControls.value || _.lockedControls.value),
+                    child: widget.child),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: AnimatedOpacity(
                   opacity:
-                      (!_.showControls.value || _.lockedControls.value) ? 0 : 1,
+                      !(_.showControls.value && _.lockedControls.value) ? 0 : 1,
                   duration: _.durations.controlsDuration,
                   child: IgnorePointer(
                       ignoring:
-                          (!_.showControls.value || _.lockedControls.value),
-                      child: widget.child),
+                          !(_.showControls.value && _.lockedControls.value),
+                      child: LockButton(
+                        responsive: _.responsive,
+                      )),
                 ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: AnimatedOpacity(
-                    opacity: !(_.showControls.value && _.lockedControls.value)
-                        ? 0
-                        : 1,
-                    duration: _.durations.controlsDuration,
-                    child: IgnorePointer(
-                        ignoring:
-                            !(_.showControls.value && _.lockedControls.value),
-                        child: LockButton(
-                          responsive: _.responsive,
-                        )),
-                  ),
-                ),
-              ],
-            )));
+              ),
+            ],
+          )),
+    );
+    if (widget.enableDrags) {
+      result = GestureDetector(
+          onPanStart:
+              UniversalPlatform.isDesktop ? (__) => windowDrag(_) : null,
+          onTap: () => onTap(_),
+          onLongPressStart: (_.mobileControls &&
+                  _.enabledControls.onLongPressSpeedUp)
+              ? (details) {
+                  if (_.customCallbacks.onLongPressStartedCallback != null) {
+                    _.customCallbacks.onLongPressStartedCallback!(_);
+                  } else {
+                    _.setPlaybackSpeed(2);
+                  }
+                }
+              : null,
+          onLongPressEnd:
+              (_.mobileControls && _.enabledControls.onLongPressSpeedUp)
+                  ? (details) {
+                      if (_.customCallbacks.onLongPressEndedCallback != null) {
+                        _.customCallbacks.onLongPressEndedCallback!(_);
+                      } else {
+                        _.setPlaybackSpeed(1);
+                      }
+                    }
+                  : null,
+          onHorizontalDragUpdate:
+              (_.mobileControls && !widget.preventVerticalDrag)
+                  ? (details) => onHorizontalDragUpdate(details, _)
+                  : null,
+          onHorizontalDragEnd: (_.mobileControls && !widget.preventVerticalDrag)
+              ? (details) => onHorizontalDragEnd(details, _)
+              : null,
+          onVerticalDragUpdate:
+              (_.mobileControls && !widget.preventVerticalDrag)
+                  ? (details) => onVerticalDragUpdate(details, _)
+                  : null,
+          onVerticalDragEnd: (_.mobileControls && !widget.preventVerticalDrag)
+              ? (details) => onVerticalDragEnd(details, _)
+              : null,
+          child: result);
+    }
+
+    return result;
     //_.videoPlayerController!.seekTo(position);
   }
 
