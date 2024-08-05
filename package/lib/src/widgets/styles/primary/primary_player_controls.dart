@@ -46,7 +46,7 @@ class PrimaryVideoPlayerControls extends StatelessWidget {
                   size: responsive.iconSize(),
                   iconColor: Colors.white,
                   backgroundColor: Colors.transparent,
-                  iconPath: 'assets/icons/rewind.png',
+                  iconPath: 'assets/images/rewind.webp',
                   customIcon: _.customIcons.rewind,
                 ),
                 const SizedBox(width: 10),
@@ -81,7 +81,7 @@ class PrimaryVideoPlayerControls extends StatelessWidget {
                   iconColor: Colors.white,
                   backgroundColor: Colors.transparent,
                   size: responsive.iconSize(),
-                  iconPath: 'assets/icons/fast-forward.png',
+                  iconPath: 'assets/images/forward.webp',
                   customIcon: _.customIcons.fastForward,
                 ),
               ]

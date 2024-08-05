@@ -31,10 +31,10 @@ class PlayPauseButton extends StatelessWidget {
         String iconPath = 'assets/icons/repeat.png';
         Widget? customIcon = _.customIcons.repeat;
         if (_.playerStatus.playing) {
-          iconPath = 'assets/icons/pause.png';
+          iconPath = 'assets/images/pause.webp';
           customIcon = _.customIcons.pause;
         } else if (_.playerStatus.paused) {
-          iconPath = 'assets/icons/play.png';
+          iconPath = 'assets/images/play.webp';
           customIcon = _.customIcons.play;
         }
         return PlayerButton(

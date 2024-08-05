@@ -95,6 +95,7 @@ flutter:
     - assets/icons/lock-screen.png
     - assets/icons/exit_lock-screen.png
     - assets/icons/fit.png
+    - assets/images/
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

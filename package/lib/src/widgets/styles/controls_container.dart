@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
 import 'package:flutter_meedu_videoplayer/src/widgets/lock_button.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -282,15 +284,28 @@ class _ControlsContainerState extends State<ControlsContainer> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: SizedBox(
-                    height: widget.responsive.height / 2,
+                    height: widget.responsive.height / 3,
                     width: 35,
                     child: Stack(
                       alignment: AlignmentDirectional.bottomCenter,
                       children: [
                         Container(color: Colors.black38),
-                        Container(
-                          height: _.volume.value * widget.responsive.height / 2,
-                          color: Colors.blue,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          clipper: MyClipper(1 - _.volume.value),
+                          child: Container(
+                            height: widget.responsive.height / 3,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                  Colors.blueAccent.shade700,
+                                  Colors.blueAccent.shade400,
+                                  Colors.blueAccent.shade100,
+                                  Colors.greenAccent
+                                ])),
+                          ),
                         ),
                         Container(
                             padding: const EdgeInsets.all(5),
@@ -320,16 +335,28 @@ class _ControlsContainerState extends State<ControlsContainer> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: SizedBox(
-                    height: widget.responsive.height / 2,
+                    height: widget.responsive.height / 3,
                     width: 35,
                     child: Stack(
                       alignment: AlignmentDirectional.bottomCenter,
                       children: [
                         Container(color: Colors.black38),
-                        Container(
-                          height:
-                              _.brightness.value * widget.responsive.height / 2,
-                          color: Colors.blue,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          clipper: MyClipper(1 - _.brightness.value),
+                          child: Container(
+                            height: widget.responsive.height / 3,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                  Colors.yellowAccent.shade700,
+                                  Colors.yellowAccent.shade400,
+                                  Colors.yellowAccent.shade100,
+                                  Colors.white
+                                ])),
+                          ),
                         ),
                         Container(
                             padding: const EdgeInsets.all(5),
@@ -690,5 +717,26 @@ class _ControlsContainerState extends State<ControlsContainer> {
     final _ = MeeduPlayerController.of(context);
 
     return Positioned.fill(child: controlsUI(_, context));
+  }
+}
+
+class MyClipper extends CustomClipper<RRect> {
+  final double percent;
+
+  MyClipper(this.percent);
+
+  @override
+  RRect getClip(Size size) {
+    return RRect.fromLTRBAndCorners(
+      0,
+      size.height,
+      size.width,
+      size.height * percent,
+    );
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<RRect> oldClipper) {
+    return true;
   }
 }
