@@ -167,9 +167,7 @@ class MeeduPlayerController {
   /// [showControls] is true if the player controls are visible
   Rx<bool> get showControls => _showControls;
 
-
   Rx<bool> get enableDrags => _enableDrag;
-
 
   Stream<bool> get onShowControlsChanged => _showControls.stream;
 
@@ -320,6 +318,8 @@ class MeeduPlayerController {
   final OnSettingsChangedCallback? onSpeedChangedCallback;
   final OnSettingsChangedCallback? onBoxFitChangedCallback;
 
+  final bool enablePlayBackground;
+
   /// creates an instance of [MeeduPlayerController]
   ///
   /// [screenManager] the device orientations and overlays
@@ -356,6 +356,7 @@ class MeeduPlayerController {
     this.enabledControls = const EnabledControls(),
     this.enabledOverlays = const EnabledOverlays(),
     this.customCallbacks = const CustomCallbacks(),
+    this.enablePlayBackground = false,
     Responsive? responsive,
     this.durations = const Durations(),
     this.onVideoPlayerClosed,
@@ -432,11 +433,15 @@ class MeeduPlayerController {
   VideoPlayerController _createVideoController(DataSource dataSource) {
     VideoPlayerController tmp; // create a new video controller
     //dataSource = await checkIfm3u8AndNoLinks(dataSource);
+    VideoPlayerOptions options = VideoPlayerOptions(
+      allowBackgroundPlayback: enablePlayBackground,
+    );
     if (dataSource.type == DataSourceType.asset) {
       tmp = VideoPlayerController.asset(
         dataSource.source!,
         closedCaptionFile: dataSource.closedCaptionFile,
         package: dataSource.package,
+        videoPlayerOptions: options,
       );
     } else if (dataSource.type == DataSourceType.network) {
       tmp = VideoPlayerController.networkUrl(
@@ -444,14 +449,17 @@ class MeeduPlayerController {
         formatHint: dataSource.formatHint,
         closedCaptionFile: dataSource.closedCaptionFile,
         httpHeaders: dataSource.httpHeaders ?? {},
+        videoPlayerOptions: options,
       );
     } else {
       tmp = VideoPlayerController.file(
         dataSource.file!,
         closedCaptionFile: dataSource.closedCaptionFile,
         httpHeaders: dataSource.httpHeaders ?? {},
+        videoPlayerOptions: options,
       );
     }
+
     return tmp;
   }
 
@@ -911,11 +919,9 @@ class MeeduPlayerController {
     }
   }
 
-
   set enableDrag(bool visible) {
     _enableDrag.value = visible;
   }
-
 
   void toggleLockScreenMobile() {
     if (!UniversalPlatform.isDesktopOrWeb) {
